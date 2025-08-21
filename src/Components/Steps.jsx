@@ -11,43 +11,16 @@ import TextField from '@mui/material/TextField';
 const steps = ['Basic Informations', 'Contact Details', 'Education Details', 'Professional Details', 'Skills & Certifications', 'Review & Submit'];
 
 
-function Steps() {
+function Steps({userInput,setUserInput}) {
   const skillSuggestionArray = ['NODE JS', 'EXPRESS', 'CSS', 'MONGODB', 'REACT', 'GIT', 'ANGULAR', 'NEXT JS', 'BOOTSTRAP', 'TAILWIND']
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
 
-  //state for storing user input data
-  const [userInput, setUserInput] = React.useState({
-    personelData: {
-      name: '',
-      jobTitle: '',
-      location: '',
-      email: '',
-      phoneNumber: '',
-      github: '',
-      linkedin: '',
-      portfolio: ''
-    },
-    education: {
-      course: '',
-      college: '',
-      university: '',
-      year: ''
-    },
-    experience: {
-      jobRole: '',
-      companyname: '',
-      jobLocation: '',
-      duration: ''
-    },
-    skills: [],
-    summary: ''
-
-  })
+  
 
   const userSkillRef = React.useRef()
 
-  console.log(userInput);
+  // console.log(userInput);
 
 
   const isStepOptional = (step) => {
