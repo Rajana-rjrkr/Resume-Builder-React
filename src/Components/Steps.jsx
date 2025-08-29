@@ -6,17 +6,18 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-
+import swal from 'sweetalert';
+import { addResumeAPI } from '../services/allAPI';
 
 const steps = ['Basic Informations', 'Contact Details', 'Education Details', 'Professional Details', 'Skills & Certifications', 'Review & Submit'];
 
-
-function Steps({userInput,setUserInput}) {
+// 
+function Steps({ userInput, setUserInput, setFinish, setResumeId}) {
   const skillSuggestionArray = ['NODE JS', 'EXPRESS', 'CSS', 'MONGODB', 'REACT', 'GIT', 'ANGULAR', 'NEXT JS', 'BOOTSTRAP', 'TAILWIND']
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
 
-  
+
 
   const userSkillRef = React.useRef()
 
@@ -110,7 +111,7 @@ function Steps({userInput,setUserInput}) {
           <h3>Education Details</h3>
           <div className="d-flex row p-3">
             <TextField id="standard-basic-course" label="Course Name" variant="standard" value={userInput.education.course} onChange={e => setUserInput({ ...userInput, education: { ...userInput.education, course: e.target.value } })} />
-            <TextField id="standard-basic-college" label="College Nmae" variant="standard" value={userInput.education.college} onChange={e => setUserInput({ ...userInput, education: { ...userInput.education, college: e.target.value } })} />
+            <TextField id="standard-basic-college" label="College Name" variant="standard" value={userInput.education.college} onChange={e => setUserInput({ ...userInput, education: { ...userInput.education, college: e.target.value } })} />
             <TextField id="standard-basic-university" label="University Name" variant="standard" onChange={e => setUserInput({ ...userInput, education: { ...userInput.education, university: e.target.value } })} value={userInput.education.university} />
             <TextField id="standard-basic-year" label="Year of Passout" variant="standard" value={userInput.education.year} onChange={e => setUserInput({ ...userInput, education: { ...userInput.education, year: e.target.value } })} />
 
@@ -150,7 +151,7 @@ function Steps({userInput,setUserInput}) {
             {
               userInput.skills.length > 0 ?
                 userInput.skills.map(skill => (
-                  <span key={skill} className='btn btn-primary d-flex align-items-center justify-content-center my-1'>{skill} <button className='btn text-white ms-2' onClick={()=>removeSkill(skill)}>X</button></span>
+                  <span key={skill} className='btn btn-primary d-flex align-items-center justify-content-center my-1'>{skill} <button className='btn text-white ms-2' onClick={() => removeSkill(skill)}>X</button></span>
                 ))
                 :
                 <span>NIL</span>
@@ -162,7 +163,7 @@ function Steps({userInput,setUserInput}) {
         <div>
           <h3>Professional Summary</h3>
           <div className="d-flex row p-3">
-            <TextField id="standard-basic-name" label="Write a short summary of yourself" multiline rows={7} defaultValue={'Highly motivated MERN Stack developer with strong skills in React and Node.js, eager to build scalable and user-friendly web applications. Skilled in problem-solving, API integration, and responsive design with a focus on clean, maintainable code. Passionate about continuous learning and applying new technologies to create impactful solutions. Strong communication and teamwork abilities, with a drive to contribute effectively in fast-paced, collaborative environments while delivering high-quality results.'} variant="standard" value={userInput.summary} onChange={e => setUserInput({ ...userInput, summary: e.target.value })} />
+            <TextField id="standard-basic-name" label="Write a short summary of yourself" multiline rows={7} defaultValue={'Highly motivated MERN Stack developer with strong skills in React and Node.js, eager to build scalable and user-friendly web applications. Skilled in problem-solving, API integration, and responsive design with a focus on clean, maintainable code. Passionate about continuous learning and applying new technologies to create impactful solutions. Strong communication and teamwork abilities, with a drive to contribute effectively in fast-paced, collaborative environments while delivering high-quality results.'} variant="standard" onChange={e => setUserInput({ ...userInput, summary: e.target.value })} />
 
           </div>
         </div>
@@ -171,7 +172,27 @@ function Steps({userInput,setUserInput}) {
     }
   }
 
-
+  //addresume
+  const handleAddResume = async () => {
+    // alert("API called")
+    // api call
+    const { name, jobTitle, location } = userInput.personelData
+    if (name && jobTitle && location) {
+      try {
+        const result = await addResumeAPI(userInput)
+        setResumeId(result?.data?.id)
+        console.log(result?.data?.id);
+        swal("Success!", "Resume Added Successfully", "success");
+        setFinish(true)
+      } catch (err) {
+        console.log(err);
+        swal("Error", "Resume Added Failed", "error");
+        setFinish(false)
+      }
+    } else {
+      alert("Fill the form")
+    }
+  }
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -228,9 +249,13 @@ function Steps({userInput,setUserInput}) {
                 Skip
               </Button>
             )}
-            <Button onClick={handleNext}>
-              {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-            </Button>
+            {
+              activeStep === steps.length - 1 ?
+                <Button onClick={handleAddResume}>Finish</Button> :
+                <Button onClick={handleNext}>Next</Button>
+            }
+
+
           </Box>
         </React.Fragment>
       )}

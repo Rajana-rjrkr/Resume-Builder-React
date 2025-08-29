@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Steps from '../Components/Steps'
 import Preview from '../Components/Preview'
 
@@ -31,18 +31,31 @@ function UserForm() {
     summary: ''
 
   })
+  //state for finish
+  const [finish, setFinish] = useState(false)
+  
+  //state for storing id of created resume
+  const [resumeId, setResumeId] = useState("")
+
   return (
     <>
-      <div className="container">
-        <div className="row p-5">
-          <div className="col-lg-6">
-            <Steps userInput={userInput} setUserInput={setUserInput}/>
+      {
+        finish ?
+          <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+            <Preview setUserInput={setUserInput} resumeId={resumeId} userInput={userInput} finish={finish}/>
           </div>
-          <div className="col-lg-6">
-            <Preview userInput={userInput}/>
+          :
+          <div className="container">
+            <div className="row p-5">
+              <div className="col-lg-6">
+                <Steps setResumeId={setResumeId} userInput={userInput} setUserInput={setUserInput} setFinish={setFinish} />
+              </div>
+              <div className="col-lg-6">
+                <Preview userInput={userInput} finish={finish} />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+      }
     </>
   )
 }
